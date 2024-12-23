@@ -7,6 +7,24 @@ export function Navbar() {
         Home
       </NavLink>{" "}
       <NavLink
+        to="/today"
+        className={({ isActive }) => (isActive ? "active" : "")}
+      >
+        Today&apos;s Diary
+      </NavLink>{" "}
+      <NavLink
+        to="/read"
+        className={({ isActive }) => (isActive ? "active" : "")}
+      >
+        Read
+      </NavLink>{" "}
+      <NavLink
+        to="/pages"
+        className={({ isActive }) => (isActive ? "active" : "")}
+      >
+        Pages
+      </NavLink>{" "}
+      <NavLink
         to="/config"
         className={({ isActive }) => (isActive ? "active" : "")}
       >
