@@ -2,6 +2,7 @@ import { Octokit } from "octokit";
 import { useEffect } from "react";
 import { useState } from "react";
 import { Navbar } from "../components/Navbar";
+import { DiaryContent } from "../components/DiaryContent";
 
 export function TodayDiaryPage() {
   const [todayDiary, setTodayDiary] = useState(null);
@@ -84,6 +85,9 @@ export function TodayDiaryPage() {
       <Navbar />
       <h1>{todayDiary ? todayDiary.name : "Loading..."}</h1>
       <hr />
+      <section>
+        <DiaryContent todayDiary={todayDiary} />
+      </section>
     </div>
   );
 }
