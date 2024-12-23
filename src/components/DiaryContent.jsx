@@ -12,6 +12,17 @@ DiaryContent.propTypes = {
 
 export function DiaryContent({ todayDiary }) {
   const [diaryContent, setDiaryContent] = useState("");
+  const [isRevealed, setIsRevealed] = useState(false);
+
+  function handleToggleRevealContent() {
+    if (isRevealed) {
+      setDiaryContent(btoa(btoa(diaryContent)));
+      setIsRevealed(false);
+    } else {
+      setDiaryContent(atob(atob(diaryContent)));
+      setIsRevealed(true);
+    }
+  }
 
   function handleOnChangeDiaryContent(event) {
     const { value } = event.target;
@@ -67,16 +78,23 @@ export function DiaryContent({ todayDiary }) {
     <>
       <form onSubmit={handleFormSubmit}>
         <div>
-          <input type="checkbox" id="reveal-contet" />
+          <input
+            onChange={handleToggleRevealContent}
+            type="checkbox"
+            id="reveal-content"
+          />
           <label htmlFor="reveal-content">Reveal Content</label>
         </div>
         <textarea
+          disabled={!isRevealed}
           name="diaryContent"
           value={diaryContent ? diaryContent : "loading..."}
           onChange={handleOnChangeDiaryContent}
         ></textarea>
 
-        <button type="submit">Save changes</button>
+        <button disabled={!isRevealed} type="submit">
+          Save changes
+        </button>
       </form>
     </>
   );
