@@ -1,10 +1,14 @@
-import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
-import { Home } from "./pages/Home";
+import { HomePage } from "./pages/Home.page";
+import { BrowserRouter, Route, Routes } from "react-router";
+import { ConfigPage } from "./pages/Config.page";
 
 createRoot(document.getElementById("root")).render(
-  <StrictMode>
-    <Home />
-  </StrictMode>
+  <BrowserRouter>
+    <Routes>
+      <Route path="/" element={<HomePage />} />
+      <Route path="/config" element={<ConfigPage />} />
+    </Routes>
+  </BrowserRouter>
 );
