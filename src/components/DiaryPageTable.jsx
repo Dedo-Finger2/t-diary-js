@@ -69,7 +69,7 @@ export function DiaryPageTable() {
   }
 
   function getNumberOfWords(content) {
-    const decryptedContent = atob(content);
+    const decryptedContent = atob(atob(content));
     return decryptedContent.split(" ").length;
   }
 
