@@ -14,12 +14,15 @@ export function DiaryContent({ todayDiary }) {
   const [diaryContent, setDiaryContent] = useState("");
   const [isTryingToSave, setIsTryingToSave] = useState(false);
 
-  async function trySaveToGitHub(maxAtempts = 5, delayPerAttemptInSeconds = 5) {
+  async function trySaveToGitHub(
+    maxAttempts = 5,
+    delayPerAttemptInSeconds = 5
+  ) {
     let attempts = 0;
 
     do {
       const today = new Date().toLocaleDateString().split("/");
-      const formatedTodayDate = `${today[2]}-${today[0]}-${today[1]}`;
+      const formattedTodayDate = `${today[2]}-${today[0]}-${today[1]}`;
       const userConfig = JSON.parse(localStorage.getItem("userConfigData"));
 
       const octokit = new Octokit({
@@ -27,15 +30,15 @@ export function DiaryContent({ todayDiary }) {
       });
 
       try {
-        // Passo 1: Obter o SHA mais recente
+        // Passo 1: O obter o SHA mais recente
         const getFileResponse = await octokit.request(
           "GET /repos/{owner}/{repo}/contents/{path}",
           {
             owner: userConfig.username,
             repo: userConfig.repositoryName,
-            path: formatedTodayDate + ".md",
+            path: formattedTodayDate + ".md",
             ref: userConfig.branchName,
-          },
+          }
         );
         const latestSha = getFileResponse.data.sha;
 
@@ -45,7 +48,7 @@ export function DiaryContent({ todayDiary }) {
           {
             owner: userConfig.username,
             repo: userConfig.repositoryName,
-            path: formatedTodayDate + ".md",
+            path: formattedTodayDate + ".md",
             branch: userConfig.branchName,
             sha: latestSha, // Use o SHA mais recente
             message: "updates today's diary",
@@ -57,7 +60,7 @@ export function DiaryContent({ todayDiary }) {
             headers: {
               "X-GitHub-Api-Version": "2022-11-28",
             },
-          },
+          }
         );
 
         if (response.status === 200 || response.status === 201) {
@@ -68,13 +71,13 @@ export function DiaryContent({ todayDiary }) {
       } catch (error) {
         if (error.response && error.response.status === 409) {
           setTimeout(() => {
-            console.warn("Retrying to send udpates to GitHub...");
-          }, delayPerAttemptInSeconds * 1000); // seconds to miliseconds
+            console.warn("Retrying to send updates to GitHub...");
+          }, delayPerAttemptInSeconds * 1000); // seconds to milliseconds
         } else {
           console.error(error);
         }
       }
-    } while (attempts < maxAtempts);
+    } while (attempts < maxAttempts);
 
     console.warn("Failed to save updates.");
   }

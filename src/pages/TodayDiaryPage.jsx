@@ -9,7 +9,7 @@ export function TodayDiaryPage() {
 
   useEffect(() => {
     const today = new Date().toLocaleDateString().split("/");
-    const formatedTodayDate = `${today[2]}-${today[0]}-${today[1]}`;
+    const formattedTodayDate = `${today[2]}-${today[0]}-${today[1]}`;
     const userConfig = JSON.parse(localStorage.getItem("userConfigData"));
 
     async function getTodayDiary() {
@@ -23,7 +23,7 @@ export function TodayDiaryPage() {
           {
             owner: userConfig.username,
             repo: userConfig.repositoryName,
-            path: formatedTodayDate + ".md",
+            path: formattedTodayDate + ".md",
             ref: userConfig.branchName,
             headers: {
               "X-GitHub-Api-Version": "2022-11-28",
@@ -51,7 +51,7 @@ export function TodayDiaryPage() {
           {
             owner: userConfig.username,
             repo: userConfig.repositoryName,
-            path: formatedTodayDate + ".md",
+            path: formattedTodayDate + ".md",
             branch: userConfig.branchName,
             message: "created today's diary",
             committer: {
