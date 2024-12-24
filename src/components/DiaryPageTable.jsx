@@ -1,9 +1,16 @@
 import { Octokit } from "octokit";
 import { useState } from "react";
 import { useEffect } from "react";
+import { useNavigate } from "react-router";
 
 export function DiaryPageTable() {
   const [pages, setPages] = useState([]);
+
+  const navigate = useNavigate();
+
+  function handleViewPage(path) {
+    navigate(`/page/${path}`);
+  }
 
   function getNumberOfWords(content) {
     const decryptedContent = atob(content);
@@ -77,7 +84,12 @@ export function DiaryPageTable() {
                 <td>W.I.P</td>
                 <td>
                   <button type="button">Edit</button>
-                  <button type="button">View</button>
+                  <button
+                    onClick={() => handleViewPage(page.name)}
+                    type="button"
+                  >
+                    View
+                  </button>
                   <button type="button">Delete</button>
                 </td>
               </tr>
