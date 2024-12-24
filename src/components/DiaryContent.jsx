@@ -35,7 +35,7 @@ export function DiaryContent({ todayDiary }) {
             repo: userConfig.repositoryName,
             path: formatedTodayDate + ".md",
             ref: userConfig.branchName,
-          }
+          },
         );
         const latestSha = getFileResponse.data.sha;
 
@@ -57,7 +57,7 @@ export function DiaryContent({ todayDiary }) {
             headers: {
               "X-GitHub-Api-Version": "2022-11-28",
             },
-          }
+          },
         );
 
         if (response.status === 200 || response.status === 201) {
@@ -107,7 +107,6 @@ export function DiaryContent({ todayDiary }) {
     if (cachedValue && usingOldCache) {
       setDiaryContent(cachedValue);
     } else {
-      console.log("aqui");
       setDiaryContent(todayDiaryContent);
       localStorage.removeItem("cachedNewContent");
     }
