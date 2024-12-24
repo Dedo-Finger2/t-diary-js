@@ -44,3 +44,9 @@
   justify-content: space-between;
   margin-top: 1.4rem;
 }
+
+.read-diary-content {
+  padding: 2rem;
+  column-count: 2;
+  column-gap: 8rem;
+}

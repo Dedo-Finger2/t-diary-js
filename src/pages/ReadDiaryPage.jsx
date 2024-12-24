@@ -61,7 +61,11 @@ export function ReadDiaryPage() {
       {/* Páginas aqui */}
       <section>
         {/* TODO: Implementar mostrar conteúdo em duas colunas diferentes */}
-        <div>{content}</div>
+        <div>
+          <button>Previous</button>
+          <button>Next</button>
+        </div>
+        <div className="read-diary-content">{content}</div>
       </section>
     </>
   );
