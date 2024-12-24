@@ -8,9 +8,10 @@ DiaryContent.propTypes = {
     content: PropTypes.string.isRequired,
     sha: PropTypes.string.isRequired,
   }),
+  canEdit: PropTypes.bool,
 };
 
-export function DiaryContent({ todayDiary }) {
+export function DiaryContent({ todayDiary, canEdit }) {
   const [diaryContent, setDiaryContent] = useState("");
   const [isTryingToSave, setIsTryingToSave] = useState(false);
 
@@ -120,15 +121,19 @@ export function DiaryContent({ todayDiary }) {
       {isTryingToSave ? <span>Saving...</span> : ""}
       <form onSubmit={handleFormSubmit}>
         <textarea
-          disabled={isTryingToSave}
+          disabled={isTryingToSave || !canEdit}
           name="diaryContent"
           value={diaryContent ? diaryContent : ""}
           onChange={handleOnChangeDiaryContent}
         ></textarea>
 
-        <button disabled={isTryingToSave} type="submit">
-          Save changes
-        </button>
+        {canEdit ? (
+          <button disabled={isTryingToSave} type="submit">
+            Save changes
+          </button>
+        ) : (
+          ""
+        )}
       </form>
     </>
   );
