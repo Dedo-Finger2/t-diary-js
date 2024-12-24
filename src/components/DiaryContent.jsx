@@ -122,7 +122,7 @@ export function DiaryContent({ todayDiary }) {
         <textarea
           disabled={isTryingToSave}
           name="diaryContent"
-          value={diaryContent ? diaryContent : "loading..."}
+          value={diaryContent ? diaryContent : ""}
           onChange={handleOnChangeDiaryContent}
         ></textarea>
 
