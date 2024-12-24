@@ -83,7 +83,7 @@ export function TodayDiaryPage() {
   return (
     <div>
       <Navbar />
-      <h1>{todayDiary ? todayDiary.name : "Loading..."}</h1>
+      <h1>{todayDiary ? todayDiary.name.split(".")[0] : "Loading..."}</h1>
       <hr />
       <section>
         <DiaryContent todayDiary={todayDiary} />
