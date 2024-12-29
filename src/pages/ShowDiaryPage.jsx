@@ -24,7 +24,7 @@ export function ShowDiaryPagePage() {
           repo: userConfig.repositoryName,
           path,
           ref: userConfig.branchName,
-        }
+        },
       );
 
       setPage(response.data);
