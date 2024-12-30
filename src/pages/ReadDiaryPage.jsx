@@ -18,7 +18,7 @@ export function ReadDiaryPage() {
 
   async function fetchData() {
     try {
-      const pages = [];
+      let combinedContent = "";
 
       const octokit = new Octokit({
         auth: userConfigData.apiKey,
@@ -48,17 +48,17 @@ export function ReadDiaryPage() {
 
           if (response.status === 200) {
             const content =
-              "<span className='diary-title'>" +
+              "<h1 className='diary-title'>" +
               response.data.name.split(".")[0] +
-              "</span>" +
+              "</h1>" +
               "<br />" +
               atob(atob(response.data.content)).replaceAll("\n", "<br />");
-            pages.push(content);
+            combinedContent += content;
           }
         }
       }
 
-      return pages;
+      return combinedContent;
     } catch (error) {
       console.error(error);
     }
@@ -70,7 +70,11 @@ export function ReadDiaryPage() {
         <Navbar />
         <h1>Reading Diary</h1>
         <hr />
-        {isLoading ? "Loading..." : console.log(data)}
+        {isLoading ? (
+          "Loading..."
+        ) : (
+          <div dangerouslySetInnerHTML={{ __html: data }}></div>
+        )}
       </section>
     </>
   );
