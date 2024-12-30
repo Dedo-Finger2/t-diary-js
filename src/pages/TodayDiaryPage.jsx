@@ -3,9 +3,17 @@ import { useEffect } from "react";
 import { useState } from "react";
 import { Navbar } from "../components/Navbar";
 import { DiaryContent } from "../components/DiaryContent";
+import { useNavigate } from "react-router";
 
 export function TodayDiaryPage() {
   const [todayDiary, setTodayDiary] = useState(null);
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const userConfigData = localStorage.getItem("userConfigData");
+    if (userConfigData === null) navigate("/config");
+  });
 
   useEffect(() => {
     const today = new Date().toLocaleDateString().split("/");

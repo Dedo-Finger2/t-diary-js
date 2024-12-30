@@ -14,6 +14,11 @@ export function DiaryPageTable() {
 
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const userConfigData = localStorage.getItem("userConfigData");
+    if (userConfigData === null) navigate("/config");
+  });
+
   function handleViewPage(path) {
     navigate(`/page/${path}`);
   }

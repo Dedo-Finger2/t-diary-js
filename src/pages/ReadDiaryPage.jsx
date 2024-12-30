@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router";
 import { Octokit } from "octokit";
 import { Navbar } from "../components/Navbar";
 
@@ -6,6 +7,13 @@ export function ReadDiaryPage() {
   const [pages, setPages] = useState(new Map());
   const [currentPage, setCurrentPage] = useState(0);
   const containerRef = useRef(null);
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const userConfigData = localStorage.getItem("userConfigData");
+    if (userConfigData === null) navigate("/config");
+  });
 
   useEffect(() => {
     async function fetchPages() {
