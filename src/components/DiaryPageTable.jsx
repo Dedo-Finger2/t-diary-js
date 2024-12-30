@@ -99,20 +99,26 @@ export function DiaryPageTable() {
       const data = [];
 
       for (const page of response.data) {
-        const response = await octokit.request(
-          "GET /repos/{owner}/{repo}/contents/{path}?ref={ref}",
-          {
-            owner: userConfig.username,
-            repo: userConfig.repositoryName,
-            path: page.name,
-            ref: userConfig.branchName,
-          }
-        );
+        try {
+          const response = await octokit.request(
+            "GET /repos/{owner}/{repo}/contents/{path}?ref={ref}",
+            {
+              owner: userConfig.username,
+              repo: userConfig.repositoryName,
+              path: page.name,
+              ref: userConfig.branchName,
+            }
+          );
 
-        data.push({
-          ...response.data,
-          numberOfWords: getNumberOfWords(response.data.content),
-        });
+          data.push({
+            ...response.data,
+            numberOfWords: getNumberOfWords(response.data.content),
+          });
+        } catch (error) {
+          if (error?.response.status === 404) {
+            continue;
+          }
+        }
       }
 
       setPages(data);
