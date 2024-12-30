@@ -54,26 +54,23 @@ export function TodayDiaryPage() {
       });
 
       try {
-        const response = await octokit.request(
-          "PUT /repos/{owner}/{repo}/contents/{path}",
-          {
-            owner: userConfig.username,
-            repo: userConfig.repositoryName,
-            path: formattedTodayDate + ".md",
-            branch: userConfig.branchName,
-            message: "created today's diary",
-            committer: {
-              name: userConfig.username,
-              email: userConfig.email,
-            },
-            content: btoa(""),
-            headers: {
-              "X-GitHub-Api-Version": "2022-11-28",
-            },
-          }
-        );
+        await octokit.request("PUT /repos/{owner}/{repo}/contents/{path}", {
+          owner: userConfig.username,
+          repo: userConfig.repositoryName,
+          path: formattedTodayDate + ".md",
+          branch: userConfig.branchName,
+          message: "created today's diary",
+          committer: {
+            name: userConfig.username,
+            email: userConfig.email,
+          },
+          content: btoa(""),
+          headers: {
+            "X-GitHub-Api-Version": "2022-11-28",
+          },
+        });
 
-        return response.data;
+        return true;
       } catch (error) {
         console.error(error);
       }
@@ -81,7 +78,8 @@ export function TodayDiaryPage() {
 
     async function fetchDiary() {
       let data = await getTodayDiary();
-      if (!data) data = await createTodayDiary();
+      if (data === null) await createTodayDiary();
+      data = await getTodayDiary();
       setTodayDiary(data);
     }
 
