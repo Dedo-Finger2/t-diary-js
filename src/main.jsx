@@ -7,16 +7,21 @@ import { TodayDiaryPage } from "./pages/TodayDiaryPage";
 import { ListAllDiaryPagesPage } from "./pages/ListAllDiaryPages";
 import { ShowDiaryPagePage } from "./pages/ShowDiaryPage";
 import { ReadDiaryPage } from "./pages/ReadDiaryPage";
+import { QueryClient, QueryClientProvider } from "react-query";
+
+const queryClient = new QueryClient();
 
 createRoot(document.getElementById("root")).render(
-  <BrowserRouter>
-    <Routes>
-      <Route path="/" element={<HomePage />} />
-      <Route path="/today" element={<TodayDiaryPage />} />
-      <Route path="/pages" element={<ListAllDiaryPagesPage />} />
-      <Route path="/page/:path" element={<ShowDiaryPagePage />} />
-      <Route path="/read" element={<ReadDiaryPage />} />
-      <Route path="/config" element={<ConfigPage />} />
-    </Routes>
-  </BrowserRouter>
+  <QueryClientProvider client={queryClient}>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/today" element={<TodayDiaryPage />} />
+        <Route path="/pages" element={<ListAllDiaryPagesPage />} />
+        <Route path="/page/:path" element={<ShowDiaryPagePage />} />
+        <Route path="/read" element={<ReadDiaryPage />} />
+        <Route path="/config" element={<ConfigPage />} />
+      </Routes>
+    </BrowserRouter>
+  </QueryClientProvider>
 );
