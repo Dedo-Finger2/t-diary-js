@@ -3,50 +3,8 @@
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-
-.active {
-  color: white;
-}
-
-/* Estilos gerais para o modal */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5); /* Overlay escuro */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.modal-content {
-  background-color: #2c2c2c; /* Fundo escuro, mas não preto */
-  color: white; /* Texto branco */
-  padding: 20px; /* Espaçamento interno */
-  border-radius: 8px; /* Cantos arredondados para um toque moderno */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Leve sombra para destaque */
-  max-width: 90%; /* Limita o tamanho máximo */
-}
-
-.modal-buttons {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 1.4rem;
-}
-
-.read-diary-content {
-  padding: 2rem;
-  column-count: 2;
-  column-gap: 8rem;
 }
