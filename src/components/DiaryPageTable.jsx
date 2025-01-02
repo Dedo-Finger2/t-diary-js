@@ -15,6 +15,59 @@ export function DiaryPageTable() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    async function fetchData() {
+      const userConfig = JSON.parse(localStorage.getItem("userConfigData"));
+
+      const octokit = new Octokit({
+        auth: userConfig.apiKey,
+      });
+
+      try {
+        const response = await octokit.request(
+          "GET /repos/{owner}/{repo}/contents/{path}?ref={ref}",
+          {
+            owner: userConfig.username,
+            repo: userConfig.repositoryName,
+            path: ".",
+            ref: userConfig.branchName,
+          }
+        );
+
+        const data = [];
+
+        for (const page of response.data) {
+          try {
+            const response = await octokit.request(
+              "GET /repos/{owner}/{repo}/contents/{path}?ref={ref}",
+              {
+                owner: userConfig.username,
+                repo: userConfig.repositoryName,
+                path: page.name,
+                ref: userConfig.branchName,
+              }
+            );
+
+            data.push({
+              ...response.data,
+              numberOfWords: getNumberOfWords(response.data.content),
+            });
+          } catch (error) {
+            if (error?.response.status === 404) {
+              continue;
+            }
+          }
+        }
+
+        setPages(data);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    fetchData();
+  }, []);
+
+  useEffect(() => {
     const userConfigData = localStorage.getItem("userConfigData");
     if (userConfigData === null) navigate("/config");
   });
@@ -77,59 +130,6 @@ export function DiaryPageTable() {
     const decryptedContent = atob(atob(content));
     return decryptedContent.split(" ").length;
   }
-
-  async function fetchData() {
-    const userConfig = JSON.parse(localStorage.getItem("userConfigData"));
-
-    const octokit = new Octokit({
-      auth: userConfig.apiKey,
-    });
-
-    try {
-      const response = await octokit.request(
-        "GET /repos/{owner}/{repo}/contents/{path}?ref={ref}",
-        {
-          owner: userConfig.username,
-          repo: userConfig.repositoryName,
-          path: ".",
-          ref: userConfig.branchName,
-        }
-      );
-
-      const data = [];
-
-      for (const page of response.data) {
-        try {
-          const response = await octokit.request(
-            "GET /repos/{owner}/{repo}/contents/{path}?ref={ref}",
-            {
-              owner: userConfig.username,
-              repo: userConfig.repositoryName,
-              path: page.name,
-              ref: userConfig.branchName,
-            }
-          );
-
-          data.push({
-            ...response.data,
-            numberOfWords: getNumberOfWords(response.data.content),
-          });
-        } catch (error) {
-          if (error?.response.status === 404) {
-            continue;
-          }
-        }
-      }
-
-      setPages(data);
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  useEffect(() => {
-    fetchData();
-  }, []);
 
   return (
     <div>
