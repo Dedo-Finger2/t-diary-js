@@ -1,14 +1,68 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Navbar } from "../components/Navbar";
 import { Octokit } from "octokit";
 import { useNavigate } from "react-router";
 import { useQuery } from "react-query";
+import { useRef } from "react";
 
 export function ReadDiaryPage() {
   const navigate = useNavigate();
-  const { data, error, isLoading } = useQuery("diariesData", fetchData);
-
   const userConfigData = JSON.parse(localStorage.getItem("userConfigData"));
+
+  const diaryContentRef = useRef(null);
+  const { data, error, isLoading } = useQuery("diariesData", fetchData);
+  const [twoColumnSize, setTwoColumnSize] = useState(true);
+  const [cachedContent, setCachedContent] = useState(null); // Estado para armazenar o conteúdo
+  const dynamicContent = useRef([]);
+
+  useEffect(() => {
+    const localCache = localStorage.getItem("dynamicContent");
+    if (localCache) {
+      setCachedContent(JSON.parse(localCache)); // Se tiver cache, carrega o conteúdo
+    } else if (
+      !isLoading &&
+      data &&
+      dynamicContent.current.length === 0 &&
+      !localCache
+    ) {
+      const offscreenDiv = document.createElement("div");
+      offscreenDiv.style.position = "absolute";
+      offscreenDiv.style.visibility = "hidden";
+      offscreenDiv.style.width = diaryContentRef.current.offsetWidth + "px";
+      offscreenDiv.style.columnCount = 2;
+      document.body.appendChild(offscreenDiv);
+
+      let content = "";
+      const pages = [];
+      const dataChars = data.split("");
+
+      for (const char of dataChars) {
+        content += char;
+        offscreenDiv.innerText = content;
+
+        if (offscreenDiv.scrollHeight > window.innerHeight) {
+          pages.push(content);
+          content = "";
+          offscreenDiv.innerText = "";
+        }
+      }
+
+      pages.push(content);
+      dynamicContent.current = pages;
+      setCachedContent(pages); // Atualiza o estado com o novo conteúdo
+      localStorage.setItem("dynamicContent", JSON.stringify(pages)); // Cache o conteúdo
+      document.body.removeChild(offscreenDiv);
+    }
+  }, [data, isLoading]);
+
+  useEffect(() => {
+    function handleResize(e) {
+      if (e.target.innerWidth <= 900) setTwoColumnSize(false);
+      else setTwoColumnSize(true);
+    }
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     if (!userConfigData) {
@@ -73,7 +127,19 @@ export function ReadDiaryPage() {
         {isLoading ? (
           "Loading..."
         ) : (
-          <div dangerouslySetInnerHTML={{ __html: data }}></div>
+          <div
+            ref={diaryContentRef}
+            id="diary-content"
+            style={{
+              columnCount: twoColumnSize ? 2 : 1,
+            }}
+            dangerouslySetInnerHTML={{
+              __html:
+                cachedContent?.length > 0
+                  ? cachedContent[0] ?? "<h1>404 Page not found!</h1>"
+                  : "Loading...",
+            }}
+          ></div>
         )}
       </section>
     </>
