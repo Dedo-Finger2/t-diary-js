@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Navbar } from "../components/Navbar";
 import { DiaryContent } from "../components/DiaryContent";
 import { useNavigate } from "react-router";
+import { formatDateYYYYMMDD } from "./../utils/format-date.js";
 
 export function TodayDiaryPage() {
   const [todayDiary, setTodayDiary] = useState(null);
@@ -21,17 +22,6 @@ export function TodayDiaryPage() {
       new Date().toLocaleDateString()
     );
     const userConfig = JSON.parse(localStorage.getItem("userConfigData"));
-
-    function formatDateYYYYMMDD(today) {
-      const todaySplitted = today.split("/");
-      const month = todaySplitted[0];
-      const date = todaySplitted[1];
-      const year = todaySplitted[2];
-      const monthWithZeroAtStart = month.length === 1 ? "0" + month : month;
-      const dateWithZeroAtStart = date.length === 1 ? "0" + date : date;
-      const formattedTodayDate = `${year}-${monthWithZeroAtStart}-${dateWithZeroAtStart}`;
-      return formattedTodayDate;
-    }
 
     async function getTodayDiary() {
       const octokit = new Octokit({

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Octokit } from "octokit";
 import { useEffect } from "react";
 import PropTypes from "prop-types";
+import { formatDateYYYYMMDD } from "./../utils/format-date.js";
 
 DiaryContent.propTypes = {
   todayDiary: PropTypes.shape({
@@ -22,8 +23,9 @@ export function DiaryContent({ todayDiary, canEdit }) {
     let attempts = 0;
 
     do {
-      const today = new Date().toLocaleDateString().split("/");
-      const formattedTodayDate = `${today[2]}-${today[0]}-${today[1]}`;
+      const formattedTodayDate = formatDateYYYYMMDD(
+        new Date().toLocaleDateString()
+      );
       const userConfig = JSON.parse(localStorage.getItem("userConfigData"));
 
       const octokit = new Octokit({
