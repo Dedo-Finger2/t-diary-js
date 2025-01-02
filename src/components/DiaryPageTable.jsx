@@ -9,6 +9,7 @@ Modal.setAppElement("#root");
 export function DiaryPageTable() {
   const [pages, setPages] = useState([]);
   const [paginatedPages, setPaginatedPages] = useState([]);
+  const [paginatedPagesBackup, setPaginatedPagesBackup] = useState([]);
   const [selectedPageToDelete, setSelectedPageToDelete] = useState({});
   const [isDeleting, setIsDeleting] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -17,7 +18,7 @@ export function DiaryPageTable() {
 
   const navigate = useNavigate();
   const currentPage = Number(searchParams.get("currentPage") ?? 1);
-  const perPage = Number(searchParams.get("perPage") ?? 2);
+  const perPage = Number(searchParams.get("perPage") ?? 10);
 
   useEffect(() => {
     async function fetchData() {
@@ -77,7 +78,8 @@ export function DiaryPageTable() {
     const endIndex = startIndex + perPage;
     const paginatedData = pages.slice(startIndex, endIndex);
     setPaginatedPages(paginatedData);
-    setAmountOfPages(paginatedData.length);
+    setPaginatedPagesBackup(paginatedData);
+    setAmountOfPages(Math.ceil(paginatedData.length / perPage));
   }, [currentPage, pages, perPage]);
 
   useEffect(() => {
@@ -154,6 +156,21 @@ export function DiaryPageTable() {
     return decryptedContent.split(" ").length;
   }
 
+  function handleSearch(e) {
+    const value = e.target.value;
+
+    if (value.length > 0) {
+      const filteredPages = paginatedPagesBackup.filter((page) => {
+        if (page.name.split(".")[0].includes(value.toLowerCase())) {
+          return page;
+        }
+      });
+      setPaginatedPages(filteredPages);
+    } else {
+      setPaginatedPages(paginatedPagesBackup);
+    }
+  }
+
   return (
     <div>
       <Modal
@@ -177,6 +194,7 @@ export function DiaryPageTable() {
       {isDeleting ? <span>Deleting...</span> : ""}
       {pages && pages.length > 0 ? (
         <div>
+          <input type="text" onChange={handleSearch} placeholder="Search..." />
           <table>
             <thead>
               <tr>
@@ -219,15 +237,25 @@ export function DiaryPageTable() {
           <div
             style={{
               display: "flex",
-              alignItems: "center",
-              gap: "12px",
+              flexDirection: "column",
             }}
           >
-            <button onClick={handlePreviousPage}>Previous</button>
-            <p>
-              Page {currentPage} of {amountOfPages}
-            </p>
-            <button onClick={handleNextPage}>Next</button>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "12px",
+              }}
+            >
+              <button onClick={handlePreviousPage}>Previous</button>
+              <p>
+                Page {currentPage} of {amountOfPages}
+              </p>
+              <button onClick={handleNextPage}>Next</button>
+            </div>
+            <div>
+              <span>Showing {perPage} pages</span>
+            </div>
           </div>
         </div>
       ) : (
