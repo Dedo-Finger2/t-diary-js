@@ -12,13 +12,13 @@ export function ReadDiaryPage() {
   const diaryContentRef = useRef(null);
   const { data, error, isLoading } = useQuery("diariesData", fetchData);
   const [twoColumnSize, setTwoColumnSize] = useState(true);
-  const [cachedContent, setCachedContent] = useState(null); // Estado para armazenar o conteúdo
+  const [cachedContent, setCachedContent] = useState(null);
   const dynamicContent = useRef([]);
 
   useEffect(() => {
     const localCache = localStorage.getItem("dynamicContent");
     if (localCache) {
-      setCachedContent(JSON.parse(localCache)); // Se tiver cache, carrega o conteúdo
+      setCachedContent(JSON.parse(localCache));
     } else if (
       !isLoading &&
       data &&
