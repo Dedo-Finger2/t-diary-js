@@ -63,7 +63,9 @@ export function ShowDiaryPagePage() {
       <Navbar />
       <div>
         <h1>
-          {requestFailed ? "Page Not Found!" : page?.name || "Loading..."}
+          {requestFailed
+            ? "Page Not Found!"
+            : page?.name.split(".")[0] || "Loading..."}
         </h1>
         <hr />
         <div>
