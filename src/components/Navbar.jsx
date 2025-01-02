@@ -13,12 +13,6 @@ export function Navbar() {
         Today&apos;s Diary
       </NavLink>{" "}
       <NavLink
-        to="/read"
-        className={({ isActive }) => (isActive ? "active" : "")}
-      >
-        Read
-      </NavLink>{" "}
-      <NavLink
         to="/pages"
         className={({ isActive }) => (isActive ? "active" : "")}
       >
