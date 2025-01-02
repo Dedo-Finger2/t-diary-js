@@ -9,6 +9,7 @@ export function TodayDiaryPage() {
   const [todayDiary, setTodayDiary] = useState(null);
 
   const navigate = useNavigate();
+  const fileExtension = ".md";
 
   useEffect(() => {
     const userConfigData = localStorage.getItem("userConfigData");
@@ -16,9 +17,21 @@ export function TodayDiaryPage() {
   });
 
   useEffect(() => {
-    const today = new Date().toLocaleDateString().split("/");
-    const formattedTodayDate = `${today[2]}-${today[0]}-${today[1]}`;
+    const formattedTodayDate = formatDateYYYYMMDD(
+      new Date().toLocaleDateString()
+    );
     const userConfig = JSON.parse(localStorage.getItem("userConfigData"));
+
+    function formatDateYYYYMMDD(today) {
+      const todaySplitted = today.split("/");
+      const month = todaySplitted[0];
+      const date = todaySplitted[1];
+      const year = todaySplitted[2];
+      const monthWithZeroAtStart = month.length === 1 ? "0" + month : month;
+      const dateWithZeroAtStart = date.length === 1 ? "0" + date : date;
+      const formattedTodayDate = `${year}-${monthWithZeroAtStart}-${dateWithZeroAtStart}`;
+      return formattedTodayDate;
+    }
 
     async function getTodayDiary() {
       const octokit = new Octokit({
@@ -31,7 +44,7 @@ export function TodayDiaryPage() {
           {
             owner: userConfig.username,
             repo: userConfig.repositoryName,
-            path: formattedTodayDate + ".md",
+            path: formattedTodayDate + fileExtension,
             ref: userConfig.branchName,
             headers: {
               "X-GitHub-Api-Version": "2022-11-28",
