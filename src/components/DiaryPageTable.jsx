@@ -13,7 +13,7 @@ export function DiaryPageTable() {
   const [selectedPageToDelete, setSelectedPageToDelete] = useState({});
   const [isDeleting, setIsDeleting] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const [amountOfPages, setAmountOfPages] = useState(0);
 
   const navigate = useNavigate();
