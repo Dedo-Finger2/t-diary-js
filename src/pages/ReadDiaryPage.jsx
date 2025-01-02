@@ -1,19 +1,21 @@
 import { useEffect, useState } from "react";
 import { Navbar } from "../components/Navbar";
 import { Octokit } from "octokit";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { useQuery } from "react-query";
 import { useRef } from "react";
 
 export function ReadDiaryPage() {
   const navigate = useNavigate();
   const userConfigData = JSON.parse(localStorage.getItem("userConfigData"));
+  const params = useParams();
+  const currentPage = Number(params.page ?? 1) - 1;
 
   const diaryContentRef = useRef(null);
+  const dynamicContent = useRef([]);
   const { data, error, isLoading } = useQuery("diariesData", fetchData);
   const [twoColumnSize, setTwoColumnSize] = useState(true);
   const [cachedContent, setCachedContent] = useState(null);
-  const dynamicContent = useRef([]);
 
   useEffect(() => {
     const localCache = localStorage.getItem("dynamicContent");
@@ -69,6 +71,16 @@ export function ReadDiaryPage() {
       navigate("/config");
     }
   }, [navigate, userConfigData]);
+
+  function handleNextPage() {
+    if (cachedContent && cachedContent.length === currentPage + 1) return;
+    navigate(`/read/${currentPage + 2}`);
+  }
+
+  function handlePreviousPage() {
+    if (currentPage === 0) return;
+    navigate(`/read/${currentPage + 1 - 1}`);
+  }
 
   async function fetchData() {
     try {
@@ -129,8 +141,8 @@ export function ReadDiaryPage() {
         ) : (
           <div>
             <div>
-              <button>Previous</button>
-              <button>Next</button>
+              <button onClick={handlePreviousPage}>Previous</button>
+              <button onClick={handleNextPage}>Next</button>
             </div>
             <div
               ref={diaryContentRef}
@@ -141,7 +153,8 @@ export function ReadDiaryPage() {
               dangerouslySetInnerHTML={{
                 __html:
                   cachedContent?.length > 0
-                    ? cachedContent[0] ?? "<h1>404 Page not found!</h1>"
+                    ? cachedContent[currentPage] ??
+                      "<h2>404 Page not found!</h1>"
                     : "Loading...",
               }}
             ></div>

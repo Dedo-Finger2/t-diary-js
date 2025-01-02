@@ -19,7 +19,7 @@ createRoot(document.getElementById("root")).render(
         <Route path="/today" element={<TodayDiaryPage />} />
         <Route path="/pages" element={<ListAllDiaryPagesPage />} />
         <Route path="/page/:path" element={<ShowDiaryPagePage />} />
-        <Route path="/read" element={<ReadDiaryPage />} />
+        <Route path="/read/:page?" element={<ReadDiaryPage />} />
         <Route path="/config" element={<ConfigPage />} />
       </Routes>
     </BrowserRouter>
