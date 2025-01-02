@@ -127,19 +127,25 @@ export function ReadDiaryPage() {
         {isLoading ? (
           "Loading..."
         ) : (
-          <div
-            ref={diaryContentRef}
-            id="diary-content"
-            style={{
-              columnCount: twoColumnSize ? 2 : 1,
-            }}
-            dangerouslySetInnerHTML={{
-              __html:
-                cachedContent?.length > 0
-                  ? cachedContent[0] ?? "<h1>404 Page not found!</h1>"
-                  : "Loading...",
-            }}
-          ></div>
+          <div>
+            <div>
+              <button>Previous</button>
+              <button>Next</button>
+            </div>
+            <div
+              ref={diaryContentRef}
+              id="diary-content"
+              style={{
+                columnCount: twoColumnSize ? 2 : 1,
+              }}
+              dangerouslySetInnerHTML={{
+                __html:
+                  cachedContent?.length > 0
+                    ? cachedContent[0] ?? "<h1>404 Page not found!</h1>"
+                    : "Loading...",
+              }}
+            ></div>
+          </div>
         )}
       </section>
     </>
