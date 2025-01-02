@@ -101,6 +101,10 @@ export function DiaryPageTable() {
     navigate(`/page/${path}`);
   }
 
+  function handleEditPage(path) {
+    navigate(`/page/${path}/edit`);
+  }
+
   async function handleDeletePage() {
     setIsModalOpen(false);
     setIsDeleting(true);
@@ -211,7 +215,12 @@ export function DiaryPageTable() {
                   <td>{page.numberOfWords} words</td>
                   <td>W.I.P</td>
                   <td>
-                    <button type="button">Edit</button>
+                    <button
+                      onClick={() => handleEditPage(page.name)}
+                      type="button"
+                    >
+                      Edit
+                    </button>
                     <button
                       onClick={() => handleViewPage(page.name)}
                       type="button"

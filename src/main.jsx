@@ -7,6 +7,7 @@ import { TodayDiaryPage } from "./pages/TodayDiaryPage";
 import { ListAllDiaryPagesPage } from "./pages/ListAllDiaryPages";
 import { ShowDiaryPagePage } from "./pages/ShowDiaryPage";
 import { QueryClient, QueryClientProvider } from "react-query";
+import { EditDiaryPagePage } from "./pages/EditDiaryPage";
 
 const queryClient = new QueryClient();
 
@@ -18,6 +19,7 @@ createRoot(document.getElementById("root")).render(
         <Route path="/today" element={<TodayDiaryPage />} />
         <Route path="/pages" element={<ListAllDiaryPagesPage />} />
         <Route path="/page/:path" element={<ShowDiaryPagePage />} />
+        <Route path="/page/:path/edit" element={<EditDiaryPagePage />} />
         <Route path="/config" element={<ConfigPage />} />
       </Routes>
     </BrowserRouter>
