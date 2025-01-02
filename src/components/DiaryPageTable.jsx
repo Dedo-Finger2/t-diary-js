@@ -1,18 +1,23 @@
 import { Octokit } from "octokit";
 import { useState } from "react";
 import { useEffect } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, useSearchParams } from "react-router";
 import Modal from "react-modal";
 
 Modal.setAppElement("#root");
 
 export function DiaryPageTable() {
   const [pages, setPages] = useState([]);
+  const [paginatedPages, setPaginatedPages] = useState([]);
   const [selectedPageToDelete, setSelectedPageToDelete] = useState({});
   const [isDeleting, setIsDeleting] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [amountOfPages, setAmountOfPages] = useState(0);
 
   const navigate = useNavigate();
+  const currentPage = Number(searchParams.get("currentPage") ?? 1);
+  const perPage = Number(searchParams.get("perPage") ?? 2);
 
   useEffect(() => {
     async function fetchData() {
@@ -68,9 +73,27 @@ export function DiaryPageTable() {
   }, []);
 
   useEffect(() => {
+    const startIndex = (currentPage - 1) * perPage;
+    const endIndex = startIndex + perPage;
+    const paginatedData = pages.slice(startIndex, endIndex);
+    setPaginatedPages(paginatedData);
+    setAmountOfPages(paginatedData.length);
+  }, [currentPage, pages, perPage]);
+
+  useEffect(() => {
     const userConfigData = localStorage.getItem("userConfigData");
     if (userConfigData === null) navigate("/config");
   });
+
+  function handleNextPage() {
+    if (currentPage === amountOfPages) return;
+    navigate(`/pages?currentPage=${currentPage + 1}`);
+  }
+
+  function handlePreviousPage() {
+    if (currentPage === 1) return;
+    navigate(`/pages?currentPage=${currentPage - 1}`);
+  }
 
   function handleViewPage(path) {
     navigate(`/page/${path}`);
@@ -153,45 +176,60 @@ export function DiaryPageTable() {
 
       {isDeleting ? <span>Deleting...</span> : ""}
       {pages && pages.length > 0 ? (
-        <table>
-          <thead>
-            <tr>
-              <th>Title</th>
-              <th>Number of words</th>
-              <th>Categories</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {pages.map((page, index) => (
-              <tr key={index}>
-                <td>{page.name.split(".")[0]}</td>
-                <td>{page.numberOfWords} words</td>
-                <td>W.I.P</td>
-                <td>
-                  <button type="button">Edit</button>
-                  <button
-                    onClick={() => handleViewPage(page.name)}
-                    type="button"
-                  >
-                    View
-                  </button>
-                  <button onClick={() => openModal(page)} type="button">
-                    Delete
-                  </button>
-                </td>
+        <div>
+          <table>
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Number of words</th>
+                <th>Categories</th>
+                <th>Actions</th>
               </tr>
-            ))}
-          </tbody>
-          <tfoot>
-            <tr>
-              <th>Title</th>
-              <th>Number of words</th>
-              <th>Categories</th>
-              <th>Actions</th>
-            </tr>
-          </tfoot>
-        </table>
+            </thead>
+            <tbody>
+              {paginatedPages.map((page, index) => (
+                <tr key={index}>
+                  <td>{page.name.split(".")[0]}</td>
+                  <td>{page.numberOfWords} words</td>
+                  <td>W.I.P</td>
+                  <td>
+                    <button type="button">Edit</button>
+                    <button
+                      onClick={() => handleViewPage(page.name)}
+                      type="button"
+                    >
+                      View
+                    </button>
+                    <button onClick={() => openModal(page)} type="button">
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+            <tfoot>
+              <tr>
+                <th>Title</th>
+                <th>Number of words</th>
+                <th>Categories</th>
+                <th>Actions</th>
+              </tr>
+            </tfoot>
+          </table>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "12px",
+            }}
+          >
+            <button onClick={handlePreviousPage}>Previous</button>
+            <p>
+              Page {currentPage} of {amountOfPages}
+            </p>
+            <button onClick={handleNextPage}>Next</button>
+          </div>
+        </div>
       ) : (
         <span>Loading...</span>
       )}
