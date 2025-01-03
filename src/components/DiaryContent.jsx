@@ -3,9 +3,11 @@ import { Octokit } from "octokit";
 import { useEffect } from "react";
 import PropTypes from "prop-types";
 import { formatDateYYYYMMDD } from "./../utils/format-date.js";
+import UserConfig from "../utils/UserConfig.util.js";
 
 DiaryContent.propTypes = {
   todayDiary: PropTypes.shape({
+    name: PropTypes.string.isRequired,
     content: PropTypes.string.isRequired,
     sha: PropTypes.string.isRequired,
   }),
@@ -15,6 +17,8 @@ DiaryContent.propTypes = {
 export function DiaryContent({ todayDiary, canEdit }) {
   const [diaryContent, setDiaryContent] = useState("");
   const [isTryingToSave, setIsTryingToSave] = useState(false);
+
+  const userConfig = UserConfig.gitHubConfigLocalStorage;
 
   async function trySaveToGitHub(
     maxAttempts = 5,
@@ -26,7 +30,6 @@ export function DiaryContent({ todayDiary, canEdit }) {
       const formattedTodayDate = formatDateYYYYMMDD(
         new Date().toLocaleDateString()
       );
-      const userConfig = JSON.parse(localStorage.getItem("userConfigData"));
 
       const octokit = new Octokit({
         auth: userConfig.apiKey,
@@ -53,7 +56,7 @@ export function DiaryContent({ todayDiary, canEdit }) {
             repo: userConfig.repositoryName,
             path: formattedTodayDate + ".md",
             branch: userConfig.branchName,
-            sha: latestSha, // Use o SHA mais recente
+            sha: latestSha,
             message: "updates today's diary",
             committer: {
               name: userConfig.username,
@@ -75,7 +78,7 @@ export function DiaryContent({ todayDiary, canEdit }) {
         if (error.response && error.response.status === 409) {
           setTimeout(() => {
             console.warn("Retrying to send updates to GitHub...");
-          }, delayPerAttemptInSeconds * 1000); // seconds to milliseconds
+          }, delayPerAttemptInSeconds * 1000); // Seconds to milliseconds
         } else {
           console.error(error);
         }
@@ -109,8 +112,15 @@ export function DiaryContent({ todayDiary, canEdit }) {
     const cachedValue = localStorage.getItem("cachedNewContent");
     const todayDiaryContent = atob(atob(todayDiary?.content ?? ""));
     const usingOldCache = !todayDiaryContent.includes(cachedValue);
+    const todayDate = new Date();
+    todayDate.setHours(todayDate.getHours() - 3);
+    const formattedTodayDate = todayDate.toISOString().split("T")[0];
 
-    if (cachedValue && usingOldCache) {
+    if (
+      cachedValue &&
+      usingOldCache &&
+      todayDiary?.name.split(".")[0] === formattedTodayDate
+    ) {
       setDiaryContent(cachedValue);
     } else {
       setDiaryContent(todayDiaryContent);

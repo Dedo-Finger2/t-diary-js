@@ -4,15 +4,17 @@ import { Octokit } from "octokit";
 import { useEffect } from "react";
 import { useParams } from "react-router";
 import { Navbar } from "../components/Navbar";
+import UserConfig from "../utils/UserConfig.util";
 
 export function EditDiaryPagePage() {
   const [page, setPage] = useState(null);
   const [requestFailed, setRequestFailed] = useState(false);
   const { path } = useParams();
 
+  const userConfig = UserConfig.gitHubConfigLocalStorage;
+
   useEffect(() => {
     async function fetchData() {
-      const userConfig = JSON.parse(localStorage.getItem("userConfigData"));
       const octokit = new Octokit({
         auth: userConfig.apiKey,
       });
@@ -38,7 +40,13 @@ export function EditDiaryPagePage() {
     }
 
     fetchData();
-  }, [path]);
+  }, [
+    path,
+    userConfig.apiKey,
+    userConfig.branchName,
+    userConfig.repositoryName,
+    userConfig.username,
+  ]);
 
   return (
     <>

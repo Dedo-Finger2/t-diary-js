@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useState } from "react";
+import UserConfig from "../utils/UserConfig.util";
 
 export default function GitHubConfigForm() {
   const [userConfig, setUserConfig] = useState({
@@ -21,7 +22,7 @@ export default function GitHubConfigForm() {
 
   function handleFormSubmit(event) {
     event.preventDefault();
-    localStorage.setItem("userConfigData", JSON.stringify(userConfig));
+    UserConfig.saveGitHubConfigLocalStorage(userConfig);
     alert("Config saved!");
   }
 

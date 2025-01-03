@@ -5,23 +5,23 @@ import { Navbar } from "../components/Navbar";
 import { DiaryContent } from "../components/DiaryContent";
 import { useNavigate } from "react-router";
 import { formatDateYYYYMMDD } from "./../utils/format-date.js";
+import UserConfig from "../utils/UserConfig.util.js";
 
 export function TodayDiaryPage() {
   const [todayDiary, setTodayDiary] = useState(null);
 
   const navigate = useNavigate();
   const fileExtension = ".md";
+  const userConfig = UserConfig.gitHubConfigLocalStorage;
 
   useEffect(() => {
-    const userConfigData = localStorage.getItem("userConfigData");
-    if (userConfigData === null) navigate("/config");
+    if (userConfig === null) navigate("/config");
   });
 
   useEffect(() => {
     const formattedTodayDate = formatDateYYYYMMDD(
       new Date().toLocaleDateString()
     );
-    const userConfig = JSON.parse(localStorage.getItem("userConfigData"));
 
     async function getTodayDiary() {
       const octokit = new Octokit({

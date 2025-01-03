@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router";
 import Modal from "react-modal";
+import UserConfig from "../utils/UserConfig.util";
 
 Modal.setAppElement("#root");
 
@@ -19,11 +20,10 @@ export function DiaryPageTable() {
   const navigate = useNavigate();
   const currentPage = Number(searchParams.get("currentPage") ?? 1);
   const perPage = Number(searchParams.get("perPage") ?? 10);
+  const userConfig = UserConfig.gitHubConfigLocalStorage;
 
   useEffect(() => {
     async function fetchData() {
-      const userConfig = JSON.parse(localStorage.getItem("userConfigData"));
-
       const octokit = new Octokit({
         auth: userConfig.apiKey,
       });
@@ -83,8 +83,7 @@ export function DiaryPageTable() {
   }, [currentPage, pages, perPage]);
 
   useEffect(() => {
-    const userConfigData = localStorage.getItem("userConfigData");
-    if (userConfigData === null) navigate("/config");
+    if (userConfig === null) navigate("/config");
   });
 
   function handleNextPage() {
@@ -108,8 +107,6 @@ export function DiaryPageTable() {
   async function handleDeletePage() {
     setIsModalOpen(false);
     setIsDeleting(true);
-
-    const userConfig = JSON.parse(localStorage.getItem("userConfigData"));
 
     const octokit = new Octokit({
       auth: userConfig.apiKey,
