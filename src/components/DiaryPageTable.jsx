@@ -1,9 +1,9 @@
-import { Octokit } from "octokit";
 import { useState } from "react";
 import { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router";
 import Modal from "react-modal";
 import UserConfig from "../utils/UserConfig.util";
+import { GitHubRepository } from "../model/implementation/GitHubRepository";
 
 Modal.setAppElement("#root");
 
@@ -24,50 +24,9 @@ export function DiaryPageTable() {
 
   useEffect(() => {
     async function fetchData() {
-      const octokit = new Octokit({
-        auth: userConfig.apiKey,
-      });
-
-      try {
-        const response = await octokit.request(
-          "GET /repos/{owner}/{repo}/contents/{path}?ref={ref}",
-          {
-            owner: userConfig.username,
-            repo: userConfig.repositoryName,
-            path: ".",
-            ref: userConfig.branchName,
-          }
-        );
-
-        const data = [];
-
-        for (const page of response.data) {
-          try {
-            const response = await octokit.request(
-              "GET /repos/{owner}/{repo}/contents/{path}?ref={ref}",
-              {
-                owner: userConfig.username,
-                repo: userConfig.repositoryName,
-                path: page.name,
-                ref: userConfig.branchName,
-              }
-            );
-
-            data.push({
-              ...response.data,
-              numberOfWords: getNumberOfWords(response.data.content),
-            });
-          } catch (error) {
-            if (error?.response.status === 404) {
-              continue;
-            }
-          }
-        }
-
-        setPages(data);
-      } catch (error) {
-        console.error(error);
-      }
+      const repository = new GitHubRepository(userConfig);
+      const data = await repository.getAllDiaries();
+      setPages(data);
     }
 
     fetchData();
@@ -108,28 +67,11 @@ export function DiaryPageTable() {
     setIsModalOpen(false);
     setIsDeleting(true);
 
-    const octokit = new Octokit({
-      auth: userConfig.apiKey,
-    });
-
     try {
-      const response = await octokit.request(
-        "DELETE /repos/{owner}/{repo}/contents/{path}",
-        {
-          owner: userConfig.username,
-          repo: userConfig.repositoryName,
-          path: selectedPageToDelete.name,
-          sha: selectedPageToDelete.sha,
-          branch: userConfig.branchName,
-          message: "delete dairy page",
-          committer: {
-            name: userConfig.username,
-            email: userConfig.email,
-          },
-          headers: {
-            "X-GitHub-Api-Version": "2022-11-28",
-          },
-        }
+      const repository = new GitHubRepository(userConfig);
+      const response = await repository.deleteDiary(
+        selectedPageToDelete.path,
+        selectedPageToDelete.sha
       );
 
       if (response.status === 200) {
@@ -150,11 +92,6 @@ export function DiaryPageTable() {
   function closeModal() {
     setIsModalOpen(false);
     setSelectedPageToDelete({});
-  }
-
-  function getNumberOfWords(content) {
-    const decryptedContent = atob(atob(content));
-    return decryptedContent.split(" ").length;
   }
 
   function handleSearch(e) {

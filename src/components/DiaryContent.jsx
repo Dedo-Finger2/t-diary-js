@@ -1,9 +1,8 @@
-import { useState } from "react";
-import { Octokit } from "octokit";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { formatDateYYYYMMDD } from "./../utils/format-date.js";
 import UserConfig from "../utils/UserConfig.util.js";
+import { GitHubRepository } from "../model/implementation/GitHubRepository.js";
 
 DiaryContent.propTypes = {
   todayDiary: PropTypes.shape({
@@ -17,8 +16,10 @@ DiaryContent.propTypes = {
 export function DiaryContent({ todayDiary, canEdit }) {
   const [diaryContent, setDiaryContent] = useState("");
   const [isTryingToSave, setIsTryingToSave] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
 
   const userConfig = UserConfig.gitHubConfigLocalStorage;
+  const fileExtension = ".md";
 
   async function trySaveToGitHub(
     maxAttempts = 5,
@@ -26,64 +27,43 @@ export function DiaryContent({ todayDiary, canEdit }) {
   ) {
     let attempts = 0;
 
-    do {
+    while (attempts < maxAttempts) {
       const formattedTodayDate = formatDateYYYYMMDD(
         new Date().toLocaleDateString()
       );
 
-      const octokit = new Octokit({
-        auth: userConfig.apiKey,
-      });
-
       try {
-        // Passo 1: O obter o SHA mais recente
-        const getFileResponse = await octokit.request(
-          "GET /repos/{owner}/{repo}/contents/{path}",
-          {
-            owner: userConfig.username,
-            repo: userConfig.repositoryName,
-            path: formattedTodayDate + ".md",
-            ref: userConfig.branchName,
-          }
+        const repository = new GitHubRepository(userConfig);
+        const latestSha = await repository.getLatestSha(
+          formattedTodayDate + fileExtension
         );
-        const latestSha = getFileResponse.data.sha;
-
-        // Passo 2: Atualizar o arquivo com o SHA mais recente
-        const response = await octokit.request(
-          "PUT /repos/{owner}/{repo}/contents/{path}",
-          {
-            owner: userConfig.username,
-            repo: userConfig.repositoryName,
-            path: formattedTodayDate + ".md",
-            branch: userConfig.branchName,
-            sha: latestSha,
-            message: "updates today's diary",
-            committer: {
-              name: userConfig.username,
-              email: userConfig.email,
-            },
-            content: btoa(btoa(diaryContent)),
-            headers: {
-              "X-GitHub-Api-Version": "2022-11-28",
-            },
-          }
+        const response = await repository.updateDiary(
+          formattedTodayDate + fileExtension,
+          latestSha,
+          diaryContent
         );
 
-        if (response.status === 200 || response.status === 201) {
+        if (
+          (response && response.status === 200) ||
+          (response && response.status === 201)
+        ) {
           alert("Updated!");
           setIsTryingToSave(false);
           return;
         }
-      } catch (error) {
-        if (error.response && error.response.status === 409) {
-          setTimeout(() => {
-            console.warn("Retrying to send updates to GitHub...");
-          }, delayPerAttemptInSeconds * 1000); // Seconds to milliseconds
-        } else {
-          console.error(error);
+
+        if (response && response.status === 409) {
+          console.warn("Retrying to send updates to GitHub...");
+          await new Promise((resolve) =>
+            setTimeout(resolve, delayPerAttemptInSeconds * 1000)
+          );
         }
+      } catch (error) {
+        console.error(error);
       }
-    } while (attempts < maxAttempts);
+
+      attempts++;
+    }
 
     console.warn("Failed to save updates.");
   }
@@ -91,12 +71,14 @@ export function DiaryContent({ todayDiary, canEdit }) {
   function handleCachingNewContent() {
     const todayDiaryContent = atob(atob(todayDiary?.content || "")).trim();
     const newContent = diaryContent.trim();
+
     if (todayDiaryContent !== newContent) {
-      localStorage.setItem("cachedNewContent", newContent);
+      localStorage.setItem(todayDiary?.name.split(".")[0], newContent);
     }
   }
 
   function handleOnChangeDiaryContent(event) {
+    setIsEditing(true);
     const { value } = event.target;
     setDiaryContent(value);
   }
@@ -106,27 +88,22 @@ export function DiaryContent({ todayDiary, canEdit }) {
     handleCachingNewContent();
     setIsTryingToSave(true);
     await trySaveToGitHub();
+    setIsEditing(false);
   }
 
   useEffect(() => {
-    const cachedValue = localStorage.getItem("cachedNewContent");
-    const todayDiaryContent = atob(atob(todayDiary?.content ?? ""));
-    const usingOldCache = !todayDiaryContent.includes(cachedValue);
-    const todayDate = new Date();
-    todayDate.setHours(todayDate.getHours() - 3);
-    const formattedTodayDate = todayDate.toISOString().split("T")[0];
+    if (isEditing) return;
 
-    if (
-      cachedValue &&
-      usingOldCache &&
-      todayDiary?.name.split(".")[0] === formattedTodayDate
-    ) {
+    const cachedValue = localStorage.getItem(todayDiary?.name.split(".")[0]);
+    const todayDiaryContent = atob(atob(todayDiary?.content ?? ""));
+
+    if (cachedValue && todayDiaryContent !== cachedValue) {
       setDiaryContent(cachedValue);
     } else {
       setDiaryContent(todayDiaryContent);
-      localStorage.removeItem("cachedNewContent");
+      if (cachedValue) localStorage.removeItem(todayDiary?.name.split(".")[0]);
     }
-  }, [todayDiary]);
+  }, [todayDiary, isEditing]);
 
   return (
     <>
@@ -135,16 +112,14 @@ export function DiaryContent({ todayDiary, canEdit }) {
         <textarea
           disabled={isTryingToSave || !canEdit}
           name="diaryContent"
-          value={diaryContent ? diaryContent : ""}
+          value={diaryContent}
           onChange={handleOnChangeDiaryContent}
         ></textarea>
 
-        {canEdit ? (
+        {canEdit && (
           <button disabled={isTryingToSave} type="submit">
             Save changes
           </button>
-        ) : (
-          ""
         )}
       </form>
     </>
