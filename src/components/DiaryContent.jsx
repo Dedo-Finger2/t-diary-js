@@ -51,15 +51,15 @@ export function DiaryContent({ todayDiary, canEdit }) {
           setIsTryingToSave(false);
           return;
         }
-
-        if (response && response.status === 409) {
+      } catch (error) {
+        if (error.response && error.response.status === 409) {
           console.warn("Retrying to send updates to GitHub...");
           await new Promise((resolve) =>
             setTimeout(resolve, delayPerAttemptInSeconds * 1000)
           );
+        } else {
+          console.error(error);
         }
-      } catch (error) {
-        console.error(error);
       }
 
       attempts++;

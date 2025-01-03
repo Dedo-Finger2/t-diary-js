@@ -25,8 +25,12 @@ export function DiaryPageTable() {
   useEffect(() => {
     async function fetchData() {
       const repository = new GitHubRepository(userConfig);
-      const data = await repository.getAllDiaries();
-      setPages(data);
+      try {
+        const data = await repository.getAllDiaries();
+        setPages(data);
+      } catch (error) {
+        console.error(error);
+      }
     }
 
     fetchData();

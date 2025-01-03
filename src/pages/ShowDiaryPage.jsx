@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { DiaryContent } from "../components/DiaryContent";
-import { Octokit } from "octokit";
 import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router";
 import { Navbar } from "../components/Navbar";
 import UserConfig from "../utils/UserConfig.util";
+import { GitHubRepository } from "../model/implementation/GitHubRepository";
 
 export function ShowDiaryPagePage() {
   const [page, setPage] = useState(null);
@@ -17,19 +17,9 @@ export function ShowDiaryPagePage() {
 
   useEffect(() => {
     async function fetchData() {
-      const octokit = new Octokit({
-        auth: userConfig.apiKey,
-      });
       try {
-        const response = await octokit.request(
-          "GET /repos/{owner}/{repo}/contents/{path}?ref={ref}",
-          {
-            owner: userConfig.username,
-            repo: userConfig.repositoryName,
-            path,
-            ref: userConfig.branchName,
-          }
-        );
+        const repository = new GitHubRepository(userConfig);
+        const response = repository.getDiaryByFilePath(path);
         setPage(response.data);
         setRequestFailed(false);
       } catch (error) {
@@ -42,13 +32,7 @@ export function ShowDiaryPagePage() {
     }
 
     fetchData();
-  }, [
-    path,
-    userConfig.apiKey,
-    userConfig.branchName,
-    userConfig.repositoryName,
-    userConfig.username,
-  ]);
+  }, [path, userConfig]);
 
   function handleNextDiary() {
     const nextFileDate = diaryDateObject;

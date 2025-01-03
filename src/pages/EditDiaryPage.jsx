@@ -16,14 +16,18 @@ export function EditDiaryPagePage() {
   useEffect(() => {
     async function fetchData() {
       const repository = new GitHubRepository(userConfig);
-      const data = await repository.getDiaryByFilePath(path);
-      if (!data) {
-        setPage(null);
-        setRequestFailed(true);
-        return;
+      try {
+        const data = await repository.getDiaryByFilePath(path);
+        if (!data) {
+          setPage(null);
+          setRequestFailed(true);
+          return;
+        }
+        setPage(data);
+        setRequestFailed(false);
+      } catch (error) {
+        console.error(error);
       }
-      setPage(data);
-      setRequestFailed(false);
     }
 
     fetchData();
