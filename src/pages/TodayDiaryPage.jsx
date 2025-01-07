@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useState } from "react";
-import { Navbar } from "../components/Navbar";
+import { Sidebar } from "../components/Sidebar.jsx";
+import { DiaryPageCards } from "../components/DiaryPagesCards.jsx";
 import { DiaryContent } from "../components/DiaryContent";
 import { useNavigate } from "react-router";
 import UserConfig from "../utils/UserConfig.util.js";
@@ -29,13 +30,17 @@ export function TodayDiaryPage() {
   }, [userConfig]);
 
   return (
-    <div>
-      <Navbar />
-      <h1>{todayDiary ? todayDiary.name.split(".")[0] : "Loading..."}</h1>
-      <hr />
-      <section>
-        <DiaryContent todayDiary={todayDiary} canEdit={true} />
-      </section>
+    <div className="main-container">
+      <Sidebar />
+      <div className="middle-container">
+        <DiaryPageCards />
+      </div>
+      <div className="right-side-container">
+        <p>
+          <h1>{todayDiary ? todayDiary.name.split(".")[0] : "Loading..."}</h1>
+          <DiaryContent todayDiary={todayDiary} canEdit={true} />
+        </p>
+      </div>
     </div>
   );
 }

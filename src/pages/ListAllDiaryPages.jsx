@@ -8,7 +8,7 @@ export function ListAllDiaryPagesPage() {
       <div className="middle-container">
         <DiaryPageCards />
       </div>
-      <div className="diary-content">
+      <div className="right-side-container">
         <p>
           <h1>2024-04-04</h1>
           Lorem ipsum dolor sit, amet consectetur adipisicing elit. Fuga ullam

@@ -88,11 +88,9 @@ body, html {
   }
 }
 
-.diary-content {
-  display: flex;
-  max-width: 1000px;
-  justify-self: center;
-  flex-wrap: wrap;
+.right-side-container {
+  margin-left: 200px;
+  margin-right: 200px;
 }
 
 .page-card {

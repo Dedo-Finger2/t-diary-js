@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { Navbar } from "../components/Navbar";
 import { Suspense } from "react";
+import { Sidebar } from "../components/Sidebar.jsx";
+import { DiaryPageCards } from "../components/DiaryPagesCards.jsx";
 
 export function ConfigPage() {
   const [PlataformConfig, setPlataformConfig] = useState(null);
@@ -23,25 +24,29 @@ export function ConfigPage() {
   }
 
   return (
-    <>
-      <Navbar />
-      <h1>Config</h1>
-      <hr />
-      <select
-        name="plataform"
-        onChange={handleSelectPlataform}
-        id="config-plataform-select"
-      >
-        <option value="#">Select a plataform...</option>
-        <option value="github">GitHub</option>
-        <option value="gitlab">GitLab</option>
-      </select>
+    <div className="main-container">
+      <Sidebar />
+      <div className="middle-container">
+        <DiaryPageCards />
+      </div>
+      <div className="right-side-container">
+        <h1>Config</h1>
+        <select
+          name="plataform"
+          onChange={handleSelectPlataform}
+          id="config-plataform-select"
+        >
+          <option value="#">Select a plataform...</option>
+          <option value="github">GitHub</option>
+          <option value="gitlab">GitLab</option>
+        </select>
 
-      <section>
-        <Suspense fallback={<div>Loading...</div>}>
-          {PlataformConfig ? <PlataformConfig /> : "Select a plafaform..."}
-        </Suspense>
-      </section>
-    </>
+        <section>
+          <Suspense fallback={<div>Loading...</div>}>
+            {PlataformConfig ? <PlataformConfig /> : "Select a plafaform..."}
+          </Suspense>
+        </section>
+      </div>
+    </div>
   );
 }
