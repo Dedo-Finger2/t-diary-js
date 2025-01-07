@@ -88,6 +88,13 @@ body, html {
   }
 }
 
+.diary-content {
+  display: flex;
+  max-width: 1000px;
+  justify-self: center;
+  flex-wrap: wrap;
+}
+
 .page-card {
   display: flex;
   flex-direction: column;
@@ -106,7 +113,6 @@ body, html {
     border-bottom: rgb(193, 193, 193) solid 1px;
   }
 }
-
 
 .active {
   color: #4aa7fe !important;
