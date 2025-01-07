@@ -19,8 +19,8 @@ export function ShowDiaryPagePage() {
     async function fetchData() {
       try {
         const repository = new GitHubRepository(userConfig);
-        const response = repository.getDiaryByFilePath(path);
-        setPage(response.data);
+        const response = await repository.getDiaryByFilePath(path);
+        setPage(response);
         setRequestFailed(false);
       } catch (error) {
         if (error.response.status === 404) {

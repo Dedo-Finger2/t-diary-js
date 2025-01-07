@@ -14,7 +14,6 @@ createRoot(document.getElementById("root")).render(
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<ListAllDiaryPagesPage />} />
-        <Route path="/diary" element={<ListAllDiaryPagesPage />} />
         <Route path="/page/:path" element={<ShowDiaryPagePage />} />
         <Route path="/page/:path/edit" element={<EditDiaryPagePage />} />
         <Route path="/config" element={<ConfigPage />} />
