@@ -11,12 +11,6 @@ export function Sidebar() {
         alt="yuta"
       />
       <NavLink to="/" className={({ isActive }) => (isActive ? "active" : "")}>
-        <Home size={30} />
-      </NavLink>{" "}
-      <NavLink
-        to="/today"
-        className={({ isActive }) => (isActive ? "active" : "")}
-      >
         <NotebookPenIcon size={30} />
       </NavLink>{" "}
       <NavLink
