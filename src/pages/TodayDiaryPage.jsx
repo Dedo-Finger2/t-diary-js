@@ -26,7 +26,7 @@ export function TodayDiaryPage() {
     }
 
     fetchDiary();
-  }, []);
+  }, [userConfig]);
 
   return (
     <div>
