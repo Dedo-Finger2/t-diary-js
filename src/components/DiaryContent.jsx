@@ -106,7 +106,7 @@ export function DiaryContent({ todayDiary, canEdit }) {
   }, [todayDiary, isEditing]);
 
   return (
-    <>
+    <div className="diary-content-container">
       {isTryingToSave ? <span>Saving...</span> : ""}
       <form onSubmit={handleFormSubmit}>
         <textarea
@@ -122,6 +122,6 @@ export function DiaryContent({ todayDiary, canEdit }) {
           </button>
         )}
       </form>
-    </>
+    </div>
   );
 }

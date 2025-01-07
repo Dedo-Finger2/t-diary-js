@@ -1,6 +1,6 @@
 import { BookOpen } from "lucide-react";
+import { NotebookPen } from "lucide-react";
 import { Cog } from "lucide-react";
-import { Home, NotebookPenIcon } from "lucide-react";
 import { NavLink } from "react-router";
 
 export function Sidebar() {
@@ -11,10 +11,10 @@ export function Sidebar() {
         alt="yuta"
       />
       <NavLink to="/" className={({ isActive }) => (isActive ? "active" : "")}>
-        <NotebookPenIcon size={30} />
+        <NotebookPen size={30} />
       </NavLink>{" "}
       <NavLink
-        to="/pages"
+        to="/diary"
         className={({ isActive }) => (isActive ? "active" : "")}
       >
         <BookOpen size={30} />

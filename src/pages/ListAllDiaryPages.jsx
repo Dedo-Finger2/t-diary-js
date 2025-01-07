@@ -1,7 +1,34 @@
 import { DiaryPageCards } from "../components/DiaryPagesCards";
 import { Sidebar } from "../components/Sidebar";
+import { useEffect } from "react";
+import { useState } from "react";
+import { DiaryContent } from "../components/DiaryContent";
+import { useNavigate } from "react-router";
+import UserConfig from "../utils/UserConfig.util.js";
+import { GitHubRepository } from "../model/implementation/GitHubRepository.js";
 
 export function ListAllDiaryPagesPage() {
+  const [todayDiary, setTodayDiary] = useState(null);
+
+  const navigate = useNavigate();
+  const userConfig = UserConfig.gitHubConfigLocalStorage;
+
+  useEffect(() => {
+    if (userConfig === null) navigate("/config");
+  });
+
+  useEffect(() => {
+    async function fetchDiary() {
+      const repository = new GitHubRepository(userConfig);
+      let data = await repository.getTodayDiary();
+      if (data === null) await repository.createTodayDiary();
+      data = await repository.getTodayDiary();
+      setTodayDiary(data);
+    }
+
+    fetchDiary();
+  }, [userConfig]);
+
   return (
     <div className="main-container">
       <Sidebar />
@@ -9,21 +36,8 @@ export function ListAllDiaryPagesPage() {
         <DiaryPageCards />
       </div>
       <div className="right-side-container">
-        <p>
-          <h1>2024-04-04</h1>
-          Lorem ipsum dolor sit, amet consectetur adipisicing elit. Fuga ullam
-          similique non dolores ipsum deserunt. Facilis, optio! Tenetur nisi
-          vero quibusdam eum consequuntur placeat culpa quod recusandae
-          molestias, ex, ad voluptatum aliquam sapiente ipsum! Eligendi
-          consectetur aliquam sit consequuntur, laborum doloribus sapiente
-          tempore inventore accusamus. Repellat voluptate at ullam fugiat.
-          Libero enim ducimus adipisci eveniet aspernatur perferendis veniam
-          aliquid accusamus ipsum, tempora temporibus explicabo repellat. Eaque
-          totam explicabo corrupti qui ex expedita quod veniam natus? Assumenda
-          eius, repellendus vel ab deleniti corporis accusamus optio ratione
-          consectetur possimus voluptatum! Minima iusto eum distinctio amet
-          vitae alias maiores repudiandae quisquam, dicta molestias?
-        </p>
+        <h1>{todayDiary ? todayDiary.name.split(".")[0] : "Loading..."}</h1>
+        <DiaryContent todayDiary={todayDiary} canEdit={true} />
       </div>
     </div>
   );

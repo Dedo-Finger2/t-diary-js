@@ -145,3 +145,20 @@ body, html {
     cursor: pointer;
   }
 }
+
+/* Diary */
+
+.diary-content-container, .diary-content-container > form > textarea {
+  width: 100%;
+  height: 85vh;
+}
+
+.diary-content-container > form > textarea {
+  border: none;
+  outline: none;
+  line-height: 1.6;
+  font-size: 14px;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  word-wrap: break-word;
+  word-break: normal;
+}
