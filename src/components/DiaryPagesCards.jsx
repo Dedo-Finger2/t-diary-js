@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useEffect } from "react";
-import { useNavigate, useSearchParams } from "react-router";
+import { useLocation, useNavigate, useSearchParams } from "react-router";
 import Modal from "react-modal";
 import UserConfig from "../utils/UserConfig.util";
 import { GitHubRepository } from "../model/implementation/GitHubRepository";
@@ -20,6 +20,7 @@ export function DiaryPageCards() {
   const [amountOfPages, setAmountOfPages] = useState(0);
 
   const navigate = useNavigate();
+  const { pathname } = useLocation();
   const currentPage = Number(searchParams.get("currentPage") ?? 1);
   const perPage = Number(searchParams.get("perPage") ?? 5);
   const userConfig = UserConfig.gitHubConfigLocalStorage;
@@ -53,12 +54,12 @@ export function DiaryPageCards() {
 
   function handleNextPage() {
     if (currentPage === amountOfPages) return;
-    navigate(`/?currentPage=${currentPage + 1}`);
+    navigate(`${pathname}?currentPage=${currentPage + 1}`);
   }
 
   function handlePreviousPage() {
     if (currentPage === 1) return;
-    navigate(`/?currentPage=${currentPage - 1}`);
+    navigate(`${pathname}?currentPage=${currentPage - 1}`);
   }
 
   function handleViewPage(path) {
