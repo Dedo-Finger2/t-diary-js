@@ -2,6 +2,7 @@ import { Octokit } from "octokit";
 import { Repository } from "../Repository";
 import { formatDateYYYYMMDD } from "../../utils/format-date";
 import { getNumberOfWords } from "./../../utils/get-number-of-words-in-content";
+import { data } from "react-router";
 
 export class GitHubRepository extends Repository {
   #octokit;
@@ -149,23 +150,30 @@ export class GitHubRepository extends Repository {
   }
 
   async getTodayDiary() {
-    const fileExtension = ".md";
-    const formattedTodayDate = formatDateYYYYMMDD(
-      new Date().toLocaleDateString()
-    );
-    const response = await this.#octokit.request(
-      "GET /repos/{owner}/{repo}/contents/{path}?ref={ref}",
-      {
-        owner: this.#userConfig.username,
-        repo: this.#userConfig.repositoryName,
-        path: formattedTodayDate + fileExtension,
-        ref: this.#userConfig.branchName,
-        headers: {
-          "X-GitHub-Api-Version": "2022-11-28",
-        },
-      }
-    );
+    try {
+      const fileExtension = ".md";
+      const formattedTodayDate = formatDateYYYYMMDD(
+        new Date().toLocaleDateString()
+      );
+      const response = await this.#octokit.request(
+        "GET /repos/{owner}/{repo}/contents/{path}?ref={ref}",
+        {
+          owner: this.#userConfig.username,
+          repo: this.#userConfig.repositoryName,
+          path: formattedTodayDate + fileExtension,
+          ref: this.#userConfig.branchName,
+          headers: {
+            "X-GitHub-Api-Version": "2022-11-28",
+          },
+        }
+      );
 
-    return response.data;
+      return response.data;
+    } catch (error) {
+      if (error.response.status === 404) {
+        return null;
+      }
+      console.error(error.message);
+    }
   }
 }

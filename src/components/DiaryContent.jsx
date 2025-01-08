@@ -110,6 +110,7 @@ export function DiaryContent({ todayDiary, canEdit }) {
       {isTryingToSave ? <span>Saving...</span> : ""}
       <form onSubmit={handleFormSubmit}>
         <textarea
+        
           disabled={isTryingToSave || !canEdit}
           name="diaryContent"
           value={diaryContent}
