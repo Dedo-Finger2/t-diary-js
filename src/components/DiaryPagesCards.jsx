@@ -21,7 +21,7 @@ export function DiaryPageCards() {
 
   const navigate = useNavigate();
   const currentPage = Number(searchParams.get("currentPage") ?? 1);
-  const perPage = Number(searchParams.get("perPage") ?? 10);
+  const perPage = Number(searchParams.get("perPage") ?? 5);
   const userConfig = UserConfig.gitHubConfigLocalStorage;
 
   useEffect(() => {
@@ -36,7 +36,7 @@ export function DiaryPageCards() {
     }
 
     fetchData();
-  }, []);
+  }, [userConfig]);
 
   useEffect(() => {
     const startIndex = (currentPage - 1) * perPage;
@@ -44,7 +44,7 @@ export function DiaryPageCards() {
     const paginatedData = pages.slice(startIndex, endIndex);
     setPaginatedPages(paginatedData);
     setPaginatedPagesBackup(paginatedData);
-    setAmountOfPages(Math.ceil(paginatedData.length / perPage));
+    setAmountOfPages(Math.ceil(pages.length / perPage));
   }, [currentPage, pages, perPage]);
 
   useEffect(() => {
@@ -53,12 +53,12 @@ export function DiaryPageCards() {
 
   function handleNextPage() {
     if (currentPage === amountOfPages) return;
-    navigate(`/pages?currentPage=${currentPage + 1}`);
+    navigate(`/?currentPage=${currentPage + 1}`);
   }
 
   function handlePreviousPage() {
     if (currentPage === 1) return;
-    navigate(`/pages?currentPage=${currentPage - 1}`);
+    navigate(`/?currentPage=${currentPage - 1}`);
   }
 
   function handleViewPage(path) {
