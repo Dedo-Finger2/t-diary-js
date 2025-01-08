@@ -194,3 +194,56 @@ body, html {
     }
   }
 }
+
+/* Config */
+
+.config-platform-select {
+  padding: .3rem .9rem .3rem .3rem;
+  border: none;
+  /* background: #77b6f1; */
+  outline: #7399bd solid 2px;
+  font-size: 12px;
+  font-weight: bold;
+  border-radius: 8px;
+}
+
+.form-container {
+
+  margin-top: 3rem;
+
+  & form {
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+  }
+
+  & form > div {
+    display: flex;
+    flex-direction: column;
+  }
+
+  & form > div > label {
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+
+  & form > div > input {
+    border: #347dc2 2px solid;
+    padding: .4rem;
+    border-radius: 4px;
+  }
+
+  & button {
+    background-color: #347dc2;
+    padding: .4rem;
+    font-size: 14px;
+    color: whitesmoke;
+    font-weight: bold;
+    border: none;
+  }
+
+  & button:hover {
+    background-color: #22527e;
+    cursor: pointer;
+  }
+}

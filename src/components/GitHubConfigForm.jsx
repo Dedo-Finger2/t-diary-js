@@ -32,7 +32,7 @@ export default function GitHubConfigForm() {
   }, []);
 
   return (
-    <>
+    <div className="form-container">
       <form onSubmit={handleFormSubmit}>
         <div>
           <label htmlFor="api-key">API Key</label>
@@ -91,6 +91,6 @@ export default function GitHubConfigForm() {
         </div>
         <button type="submit">Salvar</button>
       </form>
-    </>
+    </div>
   );
 }

@@ -34,7 +34,7 @@ export function ConfigPage() {
         <select
           name="plataform"
           onChange={handleSelectPlataform}
-          id="config-plataform-select"
+          className="config-platform-select"
         >
           <option value="#">Select a plataform...</option>
           <option value="github">GitHub</option>
